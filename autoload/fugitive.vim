@@ -409,7 +409,7 @@ function! s:BuildShell(dir, env, args) abort
   let pre = ''
   for [var, val] in items(a:env)
     if s:winshell()
-      let pre .= 'set ' . var . '=' . s:shellesc(val) . '& '
+      let pre .= 'set ' . var . '=' . val . '& '
     else
       let pre = (len(pre) ? pre : 'env ') . var . '=' . s:shellesc(val) . ' '
     endif
@@ -3518,6 +3518,9 @@ function! s:RebaseSequenceAborter() abort
           \ 'echo exec false | cat - "$1" > "$1.fugitive"',
           \ 'mv "$1.fugitive" "$1"'],
           \ temp)
+    if has('win32')
+      let temp = substitute(temp, '\\', '/', 'g')
+    endif
     let s:rebase_sequence_aborter = temp
   endif
   return s:rebase_sequence_aborter
